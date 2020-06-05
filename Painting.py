@@ -36,12 +36,12 @@ class Painting:
         for pol in self.polygons:
             self.canvas = pol.draw(self.canvas, fill=True)
             
-    def fit(self, reference):
+    def fit(self):
         '''Calculates fitness of the canvas against reference image'''
-        self.canvas =  np.zeros(reference.shape, np.int32)
+        self.canvas =  np.zeros(self.target.shape, np.int32)
         self.paint()
         
-        self.fitness = self.rmse(reference, self.canvas)
+        self.fitness = self.rmse(self.target, self.canvas)
         return self
 
     @staticmethod
@@ -54,9 +54,9 @@ class Painting:
             sq_diff = (channel_a - channel_b) ** 2
             summed = np.sum(sq_diff)
             num_pix = sq_diff.shape[0] * sq_diff.shape[1]
-            return summed / num_pix
+            return np.sqrt(summed) / num_pix
 
-        rmse = np.sqrt((get_error(b_a, b_b) + get_error(g_a, g_b) + get_error(r_a, r_b)) / 3.0)
+        rmse = (get_error(b_a, b_b) + get_error(g_a, g_b) + get_error(r_a, r_b)) / 3.0
         return rmse
     
     @classmethod
@@ -134,7 +134,7 @@ class Painting:
             chance that mutation will cause individual to be recreated
             
         mutation_chance: float
-            chance that the mutation will actually happen
+            chance that the mutation will actually happen in a polygon
 
         ratio: float
             proportion of father's genes to get for child
@@ -144,13 +144,15 @@ class Painting:
             
         '''
         
-        happen = random.uniform(0.0, 1.0)
-        if happen > mutation_chance:
-            return self
         
         size = len(self.polygons)
         for pi in range(size):
             chance = random.uniform(0.0, 1.0)
+            
+            happen = random.uniform(0.0, 1.0)
+            
+            if happen > mutation_chance:
+                continue
             
             if chance <= recreation_chance:
                 return Painting(size, target)

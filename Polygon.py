@@ -76,8 +76,8 @@ class Polygon:
             x = vertex[0]
             y = vertex[1]
             
-            width = target.shape[0]
-            height = target.shape[1]
+            width = float(target.shape[0])
+            height = float(target.shape[1])
             
             x = min(height, max(0.0, random.uniform(x - ratio * x, x + ratio * x)))
             y = min(width, max(0.0, random.uniform(y - ratio * y, y + ratio * y)))
@@ -114,14 +114,13 @@ class Polygon:
         
         """
 
-        width = image.shape[0]
-        height = image.shape[1]
+        width = float(image.shape[0])
+        height = float(image.shape[1])
 
-        randint = random.randint
         def random_point():
-            return [randint(0, height), randint(0, width)]
+            return [random.uniform(0.0, height), random.uniform(0, width)]
         
         def random_color():
-            return (randint(0, 255), randint(0, 255), randint(0, 255))
+            return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
         return [*[random_point() for _ in range(sides)]], random_color()
